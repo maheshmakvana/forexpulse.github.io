@@ -41,3 +41,4 @@ env/
 # ── Node (por si se añade tooling en el futuro) ──────────────────────────
 node_modules/
 npm-debug.log*
+.vercel

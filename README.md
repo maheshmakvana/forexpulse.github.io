@@ -2,9 +2,9 @@
 
 A professional-grade foreign exchange monitoring platform for serious market participants. Consolidates real-time price data, central bank policy rates, institutional positioning, cross-asset flows, and AI-assisted market narrative into a single unified dashboard.
 
-**[forexpulse.github.io](https://forexpulse.github.io/)**
+**[forexpulse.github.io](https://forexpulse.github.io/)** · **[Live on Vercel](https://investingglobalmarket-mtonebcaf-maheshmakvanas-projects.vercel.app/)**
 
-![Status](https://img.shields.io/badge/Status-Live-success) ![License](https://img.shields.io/badge/License-Proprietary-red)
+![Status](https://img.shields.io/badge/Status-Live-success) ![License](https://img.shields.io/badge/License-Proprietary-red) [![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?logo=vercel)](https://investingglobalmarket-mtonebcaf-maheshmakvanas-projects.vercel.app/)
 
 ---
 
