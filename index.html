@@ -345,6 +345,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-ui);font-size
     <a href="#section-risk" data-target="section-risk">Risk</a>
     <a href="#section-positioning" data-target="section-positioning">Positioning</a>
     <a href="#section-tvcalendar" data-target="section-tvcalendar">Calendar</a>
+    <a href="#section-nse" data-target="section-nse">NSE India</a>
   </nav>
   <div class="topbar-right">
     <!-- Site menu dropdown -->
@@ -768,6 +769,120 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-ui);font-size
         <div class="alert-row" style="color:var(--text3);">Fetching AI-generated market signals…</div>
     </div>
 
+    <!-- NSE INDIA MARKET PANEL -->
+    <div class="panel" id="section-nse">
+      <div class="panel-head">
+        <span class="panel-title">NSE India — Market Overview</span>
+        <span class="panel-sub" id="nse-updated">Nifty 50 · Bank Nifty · Top Gainers &amp; Losers · via Yahoo Finance</span>
+        <div class="export-btns">
+          <button class="export-btn" onclick="exportNSEPanel('csv')" title="Export NSE data as CSV">CSV</button>
+          <button class="export-btn" onclick="exportNSEPanel('json')" title="Export NSE data as JSON">JSON</button>
+        </div>
+      </div>
+
+      <!-- NSE sub-tabs -->
+      <div id="nse-tabs" style="display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--bg2);">
+        <button class="nse-tab active" data-tab="indices" style="padding:5px 14px;font-size:10px;font-weight:600;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text);cursor:pointer;letter-spacing:.06em;text-transform:uppercase;">Indices</button>
+        <button class="nse-tab" data-tab="nifty50" style="padding:5px 14px;font-size:10px;font-weight:600;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);cursor:pointer;letter-spacing:.06em;text-transform:uppercase;">Nifty 50</button>
+        <button class="nse-tab" data-tab="gainers" style="padding:5px 14px;font-size:10px;font-weight:600;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);cursor:pointer;letter-spacing:.06em;text-transform:uppercase;">Top Gainers</button>
+        <button class="nse-tab" data-tab="losers" style="padding:5px 14px;font-size:10px;font-weight:600;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);cursor:pointer;letter-spacing:.06em;text-transform:uppercase;">Top Losers</button>
+        <button class="nse-tab" data-tab="chart" style="padding:5px 14px;font-size:10px;font-weight:600;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);cursor:pointer;letter-spacing:.06em;text-transform:uppercase;">Chart</button>
+        <span id="nse-status" style="margin-left:auto;padding:5px 12px;font-size:9px;color:var(--text3);align-self:center;"></span>
+      </div>
+
+      <!-- Indices sub-panel -->
+      <div id="nse-panel-indices" class="nse-panel" style="overflow-x:auto;">
+        <table aria-label="NSE Indices">
+          <thead>
+            <tr>
+              <th style="text-align:left" scope="col">Index</th>
+              <th scope="col">Last</th>
+              <th scope="col">Chg</th>
+              <th scope="col">Chg %</th>
+              <th scope="col">Day High</th>
+              <th scope="col">Day Low</th>
+              <th scope="col">Prev Close</th>
+            </tr>
+          </thead>
+          <tbody id="nse-indices-tbody">
+            <tr><td colspan="7" style="text-align:center;color:var(--text3);padding:18px;">Loading NSE indices…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Nifty 50 constituents sub-panel -->
+      <div id="nse-panel-nifty50" class="nse-panel" style="display:none;overflow-x:auto;">
+        <table aria-label="Nifty 50 Stocks">
+          <thead>
+            <tr>
+              <th style="text-align:left" scope="col">Symbol</th>
+              <th style="text-align:left" scope="col">Company</th>
+              <th scope="col">Last</th>
+              <th scope="col">Chg %</th>
+              <th scope="col">Volume</th>
+              <th scope="col">52W High</th>
+              <th scope="col">52W Low</th>
+              <th scope="col">Mkt Cap (Cr)</th>
+            </tr>
+          </thead>
+          <tbody id="nse-nifty50-tbody">
+            <tr><td colspan="8" style="text-align:center;color:var(--text3);padding:18px;">Click to load Nifty 50 stocks…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Top Gainers sub-panel -->
+      <div id="nse-panel-gainers" class="nse-panel" style="display:none;overflow-x:auto;">
+        <table aria-label="NSE Top Gainers">
+          <thead>
+            <tr>
+              <th style="text-align:left" scope="col">Symbol</th>
+              <th style="text-align:left" scope="col">Company</th>
+              <th scope="col">Last</th>
+              <th scope="col">Chg %</th>
+              <th scope="col">Volume</th>
+            </tr>
+          </thead>
+          <tbody id="nse-gainers-tbody">
+            <tr><td colspan="5" style="text-align:center;color:var(--text3);padding:18px;">Click to load top gainers…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Top Losers sub-panel -->
+      <div id="nse-panel-losers" class="nse-panel" style="display:none;overflow-x:auto;">
+        <table aria-label="NSE Top Losers">
+          <thead>
+            <tr>
+              <th style="text-align:left" scope="col">Symbol</th>
+              <th style="text-align:left" scope="col">Company</th>
+              <th scope="col">Last</th>
+              <th scope="col">Chg %</th>
+              <th scope="col">Volume</th>
+            </tr>
+          </thead>
+          <tbody id="nse-losers-tbody">
+            <tr><td colspan="5" style="text-align:center;color:var(--text3);padding:18px;">Click to load top losers…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Chart sub-panel -->
+      <div id="nse-panel-chart" class="nse-panel" style="display:none;height:420px;">
+        <div id="nse-chart-tabs" style="display:flex;gap:4px;padding:6px 10px;background:var(--bg2);border-bottom:1px solid var(--border);flex-wrap:wrap;">
+          <button class="nse-chart-sym active" data-sym="NSE:NIFTY" style="padding:3px 10px;font-size:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:3px;color:var(--text);cursor:pointer;">NIFTY</button>
+          <button class="nse-chart-sym" data-sym="NSE:BANKNIFTY" style="padding:3px 10px;font-size:10px;background:none;border:1px solid var(--border);border-radius:3px;color:var(--text2);cursor:pointer;">BANKNIFTY</button>
+          <button class="nse-chart-sym" data-sym="NSE:RELIANCE" style="padding:3px 10px;font-size:10px;background:none;border:1px solid var(--border);border-radius:3px;color:var(--text2);cursor:pointer;">RELIANCE</button>
+          <button class="nse-chart-sym" data-sym="NSE:TCS" style="padding:3px 10px;font-size:10px;background:none;border:1px solid var(--border);border-radius:3px;color:var(--text2);cursor:pointer;">TCS</button>
+          <button class="nse-chart-sym" data-sym="NSE:INFY" style="padding:3px 10px;font-size:10px;background:none;border:1px solid var(--border);border-radius:3px;color:var(--text2);cursor:pointer;">INFY</button>
+          <button class="nse-chart-sym" data-sym="NSE:HDFCBANK" style="padding:3px 10px;font-size:10px;background:none;border:1px solid var(--border);border-radius:3px;color:var(--text2);cursor:pointer;">HDFCBANK</button>
+          <button class="nse-chart-sym" data-sym="NSE:ICICIBANK" style="padding:3px 10px;font-size:10px;background:none;border:1px solid var(--border);border-radius:3px;color:var(--text2);cursor:pointer;">ICICIBANK</button>
+          <button class="nse-chart-sym" data-sym="NSE:WIPRO" style="padding:3px 10px;font-size:10px;background:none;border:1px solid var(--border);border-radius:3px;color:var(--text2);cursor:pointer;">WIPRO</button>
+        </div>
+        <div id="nse-tv-chart-wrap" style="width:100%;height:360px;"></div>
+      </div>
+    </div>
+
   </main>
 
   <!-- RIGHT PANEL -->
@@ -1008,6 +1123,343 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-ui);font-size
 
 <!-- PAIR DETAIL POPOVER — triggered by ⓘ button on pair rows, position:fixed overlay -->
 <div id="pd-popover" role="dialog" aria-label="Pair detail" aria-modal="false" style="display:none;position:fixed;z-index:1000;width:270px;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;box-shadow:0 4px 20px rgba(0,0,0,0.5);font-family:var(--font-ui);overflow:hidden;"></div>
+
+<!-- NSE INDIA PANEL LOGIC -->
+<script>
+(function() {
+  // Nifty 50 constituent symbols (Yahoo Finance format: symbol.NS)
+  var NIFTY50_SYMS = [
+    ['RELIANCE','Reliance Industries'],['TCS','Tata Consultancy Services'],
+    ['HDFCBANK','HDFC Bank'],['BHARTIARTL','Bharti Airtel'],['ICICIBANK','ICICI Bank'],
+    ['INFOSYS','Infosys'],['SBIN','State Bank of India'],['HINDUNILVR','Hindustan Unilever'],
+    ['ITC','ITC Limited'],['LT','Larsen & Toubro'],
+    ['KOTAKBANK','Kotak Mahindra Bank'],['AXISBANK','Axis Bank'],['BAJFINANCE','Bajaj Finance'],
+    ['WIPRO','Wipro'],['HCLTECH','HCL Technologies'],
+    ['ASIANPAINT','Asian Paints'],['MARUTI','Maruti Suzuki'],['SUNPHARMA','Sun Pharmaceutical'],
+    ['TITAN','Titan Company'],['ULTRACEMCO','UltraTech Cement'],
+    ['POWERGRID','Power Grid Corp'],['NTPC','NTPC Limited'],['ONGC','ONGC'],
+    ['JSWSTEEL','JSW Steel'],['TATAMOTORS','Tata Motors'],
+    ['NESTLEIND','Nestle India'],['TECHM','Tech Mahindra'],['DRREDDY','Dr. Reddy\'s'],
+    ['BAJAJFINSV','Bajaj Finserv'],['CIPLA','Cipla'],
+    ['DIVISLAB','Divi\'s Labs'],['EICHERMOT','Eicher Motors'],['HINDALCO','Hindalco'],
+    ['COALINDIA','Coal India'],['GRASIM','Grasim Industries'],
+    ['ADANIPORTS','Adani Ports'],['BRITANNIA','Britannia Industries'],['HEROMOTOCO','Hero MotoCorp'],
+    ['BPCL','BPCL'],['INDUSINDBK','IndusInd Bank'],
+    ['APOLLOHOSP','Apollo Hospitals'],['BAJAJ-AUTO','Bajaj Auto'],['TATACONSUM','Tata Consumer'],
+    ['SBILIFE','SBI Life Insurance'],['HDFCLIFE','HDFC Life'],
+    ['TATASTEEL','Tata Steel'],['M&M','Mahindra & Mahindra'],['ADANIENT','Adani Enterprises'],
+    ['UPL','UPL Limited'],['LTF','L&T Finance']
+  ];
+
+  // NSE index symbols mapped to Yahoo Finance tickers
+  var NSE_INDICES = [
+    { name: 'Nifty 50',      sym: '^NSEI'  },
+    { name: 'Bank Nifty',    sym: '^NSEBANK' },
+    { name: 'Nifty IT',      sym: '^CNXIT'  },
+    { name: 'Nifty Pharma',  sym: '^CNXPHARMA' },
+    { name: 'Nifty Auto',    sym: '^CNXAUTO' },
+    { name: 'Nifty FMCG',    sym: '^CNXFMCG' },
+    { name: 'Nifty Metal',   sym: '^CNXMETAL' },
+    { name: 'Nifty Realty',  sym: '^CNXREALTY' },
+    { name: 'Nifty Midcap 50', sym: '^NSEMDCP50' },
+    { name: 'India VIX',     sym: '^INDIAVIX' }
+  ];
+
+  var _nseLoaded = { indices: false, nifty50: false, gainers: false, losers: false };
+  var _nseNifty50Cache = null;
+  var _nseChartLoaded = false;
+  var _nseCurrentChartSym = 'NSE:NIFTY';
+
+  function fmtNum(v, dec) {
+    if (v == null || isNaN(v)) return '—';
+    return Number(v).toLocaleString('en-IN', { minimumFractionDigits: dec||2, maximumFractionDigits: dec||2 });
+  }
+
+  function clsChg(v) {
+    if (v > 0) return 'up'; if (v < 0) return 'down'; return 'flat';
+  }
+
+  function fmtChg(v) {
+    if (v == null || isNaN(v)) return '—';
+    var s = (v > 0 ? '+' : '') + Number(v).toFixed(2) + '%';
+    return '<span class="' + clsChg(v) + '">' + s + '</span>';
+  }
+
+  // Fetch a single Yahoo Finance quote via public JSON endpoint
+  function yahooFetch(symbols) {
+    var syms = symbols.join('%2C');
+    var url = 'https://query1.finance.yahoo.com/v7/finance/quote?symbols=' + syms +
+              '&fields=shortName,regularMarketPrice,regularMarketChange,regularMarketChangePercent,' +
+              'regularMarketDayHigh,regularMarketDayLow,regularMarketPreviousClose,' +
+              'regularMarketVolume,fiftyTwoWeekHigh,fiftyTwoWeekLow,marketCap&corsDomain=finance.yahoo.com';
+    return fetch('https://corsproxy.io/?' + encodeURIComponent(url))
+      .then(function(r){ return r.json(); })
+      .then(function(d){ return (d.quoteResponse && d.quoteResponse.result) || []; });
+  }
+
+  // ── INDICES ──────────────────────────────────────────────────────────────
+  function loadNSEIndices() {
+    if (_nseLoaded.indices) return;
+    var tbody = document.getElementById('nse-indices-tbody');
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:14px;">Fetching NSE indices…</td></tr>';
+    var syms = NSE_INDICES.map(function(i){ return i.sym; });
+    yahooFetch(syms).then(function(results) {
+      if (!results.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:14px;">Data unavailable — market may be closed</td></tr>'; return; }
+      var map = {};
+      results.forEach(function(q){ map[q.symbol] = q; });
+      var html = '';
+      NSE_INDICES.forEach(function(idx) {
+        var q = map[idx.sym] || {};
+        var price = q.regularMarketPrice;
+        var chg   = q.regularMarketChange;
+        var pct   = q.regularMarketChangePercent;
+        html += '<tr>';
+        html += '<td class="sym">' + idx.name + '</td>';
+        html += '<td style="font-family:var(--font-mono);">' + fmtNum(price) + '</td>';
+        html += '<td class="' + clsChg(chg) + '" style="font-family:var(--font-mono);">' + (chg != null ? (chg > 0 ? '+' : '') + fmtNum(chg) : '—') + '</td>';
+        html += '<td>' + fmtChg(pct) + '</td>';
+        html += '<td style="font-family:var(--font-mono);">' + fmtNum(q.regularMarketDayHigh) + '</td>';
+        html += '<td style="font-family:var(--font-mono);">' + fmtNum(q.regularMarketDayLow) + '</td>';
+        html += '<td style="font-family:var(--font-mono);">' + fmtNum(q.regularMarketPreviousClose) + '</td>';
+        html += '</tr>';
+      });
+      tbody.innerHTML = html || '<tr><td colspan="7" style="text-align:center;color:var(--text3);">No data</td></tr>';
+      document.getElementById('nse-updated').textContent =
+        'NSE Indices · ' + new Date().toLocaleTimeString();
+      _nseLoaded.indices = true;
+    }).catch(function(e) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--accent-red,#e05);padding:14px;">Failed to load NSE data. Check network / CORS proxy.</td></tr>';
+      console.warn('NSE indices fetch failed', e);
+    });
+  }
+
+  // ── NIFTY 50 STOCKS ──────────────────────────────────────────────────────
+  function loadNSENifty50() {
+    if (_nseLoaded.nifty50 && _nseNifty50Cache) { renderNifty50(_nseNifty50Cache); return; }
+    var tbody = document.getElementById('nse-nifty50-tbody');
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:14px;">Fetching Nifty 50 stocks…</td></tr>';
+    var syms = NIFTY50_SYMS.map(function(s){ return s[0] + '.NS'; });
+    // Fetch in two batches of 25 to avoid URL length limits
+    Promise.all([yahooFetch(syms.slice(0,25)), yahooFetch(syms.slice(25))])
+      .then(function(parts) {
+        var results = parts[0].concat(parts[1]);
+        _nseNifty50Cache = results;
+        _nseLoaded.nifty50 = true;
+        renderNifty50(results);
+      }).catch(function(e) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--accent-red,#e05);padding:14px;">Failed to load Nifty 50 stocks.</td></tr>';
+        console.warn('NSE Nifty50 fetch failed', e);
+      });
+  }
+
+  function renderNifty50(results) {
+    var tbody = document.getElementById('nse-nifty50-tbody');
+    var symMap = {};
+    NIFTY50_SYMS.forEach(function(s){ symMap[s[0]+'.NS'] = s[1]; });
+    var sorted = results.slice().sort(function(a,b){
+      return (b.regularMarketChangePercent||0) - (a.regularMarketChangePercent||0);
+    });
+    var html = '';
+    sorted.forEach(function(q) {
+      var pct = q.regularMarketChangePercent;
+      var cap = q.marketCap ? (q.marketCap / 1e7).toFixed(0) : '—'; // Convert to Crores
+      html += '<tr>';
+      html += '<td class="sym">' + (q.symbol||'').replace('.NS','') + '</td>';
+      html += '<td style="color:var(--text2);font-size:10px;">' + (symMap[q.symbol] || q.shortName || '—') + '</td>';
+      html += '<td style="font-family:var(--font-mono);">' + fmtNum(q.regularMarketPrice) + '</td>';
+      html += '<td>' + fmtChg(pct) + '</td>';
+      html += '<td style="font-family:var(--font-mono);color:var(--text2);">' + (q.regularMarketVolume ? Number(q.regularMarketVolume).toLocaleString('en-IN') : '—') + '</td>';
+      html += '<td style="font-family:var(--font-mono);">' + fmtNum(q.fiftyTwoWeekHigh) + '</td>';
+      html += '<td style="font-family:var(--font-mono);">' + fmtNum(q.fiftyTwoWeekLow) + '</td>';
+      html += '<td style="font-family:var(--font-mono);color:var(--text2);">' + (isNaN(cap) ? '—' : Number(cap).toLocaleString('en-IN')) + '</td>';
+      html += '</tr>';
+    });
+    tbody.innerHTML = html || '<tr><td colspan="8" style="text-align:center;color:var(--text3);">No data</td></tr>';
+  }
+
+  // ── GAINERS / LOSERS ─────────────────────────────────────────────────────
+  function loadNSEGainersLosers(type) {
+    if (_nseLoaded[type] && _nseNifty50Cache) { renderGainersLosers(type, _nseNifty50Cache); return; }
+    if (!_nseNifty50Cache) {
+      var tbody = document.getElementById('nse-' + type + '-tbody');
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:14px;">Fetching data…</td></tr>';
+      var syms = NIFTY50_SYMS.map(function(s){ return s[0] + '.NS'; });
+      Promise.all([yahooFetch(syms.slice(0,25)), yahooFetch(syms.slice(25))])
+        .then(function(parts) {
+          _nseNifty50Cache = parts[0].concat(parts[1]);
+          renderGainersLosers(type, _nseNifty50Cache);
+          _nseLoaded[type] = true;
+        }).catch(function(e) {
+          document.getElementById('nse-' + type + '-tbody').innerHTML =
+            '<tr><td colspan="5" style="text-align:center;color:var(--accent-red,#e05);padding:14px;">Failed to load data.</td></tr>';
+          console.warn('NSE ' + type + ' fetch failed', e);
+        });
+    } else {
+      renderGainersLosers(type, _nseNifty50Cache);
+      _nseLoaded[type] = true;
+    }
+  }
+
+  function renderGainersLosers(type, results) {
+    var tbody = document.getElementById('nse-' + type + '-tbody');
+    var symMap = {};
+    NIFTY50_SYMS.forEach(function(s){ symMap[s[0]+'.NS'] = s[1]; });
+    var sorted = results.slice().sort(function(a,b){
+      var pa = a.regularMarketChangePercent || 0;
+      var pb = b.regularMarketChangePercent || 0;
+      return type === 'gainers' ? pb - pa : pa - pb;
+    }).slice(0, 10);
+    var html = '';
+    sorted.forEach(function(q) {
+      var pct = q.regularMarketChangePercent;
+      html += '<tr>';
+      html += '<td class="sym">' + (q.symbol||'').replace('.NS','') + '</td>';
+      html += '<td style="color:var(--text2);font-size:10px;">' + (symMap[q.symbol] || q.shortName || '—') + '</td>';
+      html += '<td style="font-family:var(--font-mono);">' + fmtNum(q.regularMarketPrice) + '</td>';
+      html += '<td>' + fmtChg(pct) + '</td>';
+      html += '<td style="font-family:var(--font-mono);color:var(--text2);">' + (q.regularMarketVolume ? Number(q.regularMarketVolume).toLocaleString('en-IN') : '—') + '</td>';
+      html += '</tr>';
+    });
+    tbody.innerHTML = html || '<tr><td colspan="5" style="text-align:center;color:var(--text3);">No data</td></tr>';
+  }
+
+  // ── NSE TRADINGVIEW CHART ─────────────────────────────────────────────────
+  function loadNSETVChart(sym) {
+    _nseCurrentChartSym = sym || _nseCurrentChartSym;
+    var wrap = document.getElementById('nse-tv-chart-wrap');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    var container = document.createElement('div');
+    container.id = 'nse-tv-chart-inner';
+    container.style.cssText = 'width:100%;height:360px;';
+    wrap.appendChild(container);
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+    s.async = true;
+    s.innerHTML = JSON.stringify({
+      autosize: true,
+      symbol: _nseCurrentChartSym,
+      interval: 'D',
+      timezone: 'Asia/Kolkata',
+      theme: 'dark',
+      style: '1',
+      locale: 'en',
+      allow_symbol_change: false,
+      calendar: false,
+      support_host: 'https://www.tradingview.com'
+    });
+    container.appendChild(s);
+    _nseChartLoaded = true;
+  }
+
+  // ── TAB SWITCHING ─────────────────────────────────────────────────────────
+  function switchNSETab(tab) {
+    document.querySelectorAll('.nse-tab').forEach(function(btn) {
+      var active = btn.dataset.tab === tab;
+      btn.classList.toggle('active', active);
+      btn.style.borderBottomColor = active ? 'var(--accent)' : 'transparent';
+      btn.style.color = active ? 'var(--text)' : 'var(--text2)';
+    });
+    document.querySelectorAll('.nse-panel').forEach(function(p) {
+      p.style.display = 'none';
+    });
+    var panel = document.getElementById('nse-panel-' + tab);
+    if (panel) panel.style.display = '';
+
+    if (tab === 'indices')  loadNSEIndices();
+    if (tab === 'nifty50')  loadNSENifty50();
+    if (tab === 'gainers')  loadNSEGainersLosers('gainers');
+    if (tab === 'losers')   loadNSEGainersLosers('losers');
+    if (tab === 'chart' && !_nseChartLoaded) loadNSETVChart(_nseCurrentChartSym);
+  }
+
+  // ── EXPORT ────────────────────────────────────────────────────────────────
+  window.exportNSEPanel = function(fmt) {
+    var data = _nseNifty50Cache;
+    if (!data || !data.length) { alert('Load Nifty 50 tab first.'); return; }
+    var rows = data.map(function(q) {
+      return {
+        symbol: (q.symbol||'').replace('.NS',''),
+        price: q.regularMarketPrice,
+        change_pct: q.regularMarketChangePercent,
+        day_high: q.regularMarketDayHigh,
+        day_low: q.regularMarketDayLow,
+        volume: q.regularMarketVolume,
+        week52_high: q.fiftyTwoWeekHigh,
+        week52_low: q.fiftyTwoWeekLow
+      };
+    });
+    var ts = new Date().toISOString().replace(/[:.]/g,'-').slice(0,19);
+    if (fmt === 'json') {
+      var blob = new Blob([JSON.stringify(rows, null, 2)], {type:'application/json'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'nse-nifty50-' + ts + '.json';
+      a.click();
+    } else {
+      var keys = Object.keys(rows[0]);
+      var csv = keys.join(',') + '\n' + rows.map(function(r){ return keys.map(function(k){ return r[k]; }).join(','); }).join('\n');
+      var blob = new Blob([csv], {type:'text/csv'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'nse-nifty50-' + ts + '.csv';
+      a.click();
+    }
+  };
+
+  // ── INIT ──────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    // Sub-tab click handlers
+    document.querySelectorAll('.nse-tab').forEach(function(btn) {
+      btn.addEventListener('click', function() { switchNSETab(this.dataset.tab); });
+    });
+
+    // Chart symbol buttons
+    document.querySelectorAll('.nse-chart-sym').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.nse-chart-sym').forEach(function(b) {
+          b.style.background = 'none';
+          b.style.borderColor = 'var(--border)';
+          b.style.color = 'var(--text2)';
+        });
+        this.style.background = 'var(--bg3)';
+        this.style.borderColor = 'var(--border2)';
+        this.style.color = 'var(--text)';
+        loadNSETVChart(this.dataset.sym);
+      });
+    });
+
+    // Auto-load indices when section-nse enters viewport
+    var nseSectionIO = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && !_nseLoaded.indices) {
+          loadNSEIndices();
+          nseSectionIO.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '200px' });
+    var nseSection = document.getElementById('section-nse');
+    if (nseSection) nseSectionIO.observe(nseSection);
+
+    // Refresh indices every 5 minutes if panel is visible
+    setInterval(function() {
+      var nseEl = document.getElementById('section-nse');
+      if (!nseEl) return;
+      var rect = nseEl.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        _nseLoaded.indices = false;
+        _nseLoaded.nifty50 = false;
+        _nseLoaded.gainers = false;
+        _nseLoaded.losers  = false;
+        _nseNifty50Cache   = null;
+        var activeTab = document.querySelector('.nse-tab.active');
+        if (activeTab) switchNSETab(activeTab.dataset.tab);
+      }
+    }, 5 * 60 * 1000);
+  });
+})();
+</script>
 
 </body>
 </html>
